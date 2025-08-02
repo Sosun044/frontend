@@ -30,7 +30,6 @@ export function EnvanterPage() {
 
     const fetchInventories = async () => {
         try {
-            debugger
             const data = await getInventories();
             setInventoryList(data);
         } catch (err) {

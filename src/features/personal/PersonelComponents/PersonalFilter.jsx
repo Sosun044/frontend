@@ -14,7 +14,6 @@ function PersonalFilter({ onFilter, onAddClick }) {
             unit: "",
         },
         onSubmit: (values) => {
-            debugger;
             onFilter(values);
         },
     });

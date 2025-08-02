@@ -1,5 +1,5 @@
 // PersonelPage.jsx
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Card, Typography, Button, Dialog } from "@material-tailwind/react";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { useFormik } from "formik";
@@ -24,6 +24,8 @@ export function PersonelPage() {
     const [openConfirm, setOpenConfirm] = useState(false);
     const [openEdit, setOpenEdit] = useState(false);
     const [openAdd, setOpenAdd] = useState(false);
+    const isFetch = useRef(false);
+    console.log(isFetch)
     const formik = useFormik({
         initialValues: {
             firstName: "",
@@ -36,19 +38,19 @@ export function PersonelPage() {
         },
     });
     useEffect(() => {
-        const fetchData = async () => {
-            const filtersToUse = personalFilter || {}; // varsa kayıtlı filtre
-            formik.setValues(filtersToUse); // filtre formunu doldur
-            const data = await searchPersonals(filtersToUse);
-            setPersonelList(data);
-            setPersonelListBackup(data);
-        };
-
-        fetchData();
-    }, []);
+        if (!isFetch?.current) {
+            const filtersToUse = personalFilter || {};
+            formik.setValues(filtersToUse);
+            searchPersonals(filtersToUse).then((res) => {
+                setPersonelList(res);
+                setPersonelListBackup(res);
+            });
+            isFetch.current = true;
+        }
+    }, [isFetch]);
 
     const handleFilter = async (filters) => {
-        setPersonalFilter(filters); // 🔥 filtreyi sakla
+        setPersonalFilter(filters);
         const data = await searchPersonals(filters);
         setPersonelList(data);
         setPersonelListBackup(data);

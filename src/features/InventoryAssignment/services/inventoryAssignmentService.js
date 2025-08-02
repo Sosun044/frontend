@@ -72,6 +72,6 @@ export const getAllAssignmentsByPersonalId = async (personalId) => {
 };
 
 export const getMyAssignments = async () => {
-    const response = await api.get("/rest/api/inventory-assignment/myAssignments");
+    const response = await api.get("/rest/api/inventory-assignment/my-assignments");
     return response.data.payload;
 };

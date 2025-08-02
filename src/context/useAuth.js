@@ -1,4 +1,3 @@
-// src/context/useAuth.js
 import { useContext } from "react";
 import { AuthContext } from "./AuthContext";
 
@@ -12,23 +11,18 @@ export const useAuth = () => {
         token,
         user,
         logout,
-        setToken, // ✅ EKLE
-        setUser,  // ✅ EKLE
+        setToken,
+        setUser,
         isInitialized,
     } = context;
 
-    const hasRole = (allowedRoles = []) => {
-        if (!user || !user.role) return false;
-        return allowedRoles.includes(user.role);
-    };
 
     return {
         token,
         user,
         logout,
-        setToken,     // ✅ EKLE
-        setUser,      // ✅ EKLE
-        hasRole,
+        setToken,
+        setUser,
         isInitialized,
     };
 };

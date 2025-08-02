@@ -12,7 +12,6 @@ import {
 import {
   Home,
   Profile,
-  Notifications,
 } from "@/pages/dashboard";
 
 import { PersonelPage } from "@/features/personal/pages";
@@ -21,6 +20,7 @@ import EnvanterPage from "@/features/inventory/pages/EnvanterPage";
 import InventoryCreateForm from "@/features/inventory/inventoryComponents/InventoryCreateForm";
 import InventoryTypePage from "@/features/inventory/pages/InventoryTypePage";
 import InventoryAssignmentPage from "@/features/inventoryAssignment/pages/InventoryAssignmentPage";
+import NotificationPage from "./features/notification/pages/NotificationPage";
 
 const icon = {
   className: "w-5 h-5 text-inherit",
@@ -51,7 +51,7 @@ export const routes = [
         pages: [
           {
             name: "Envanter Listesi",
-            path: "/envanter-list",
+            path: "/envanter",
             element: <EnvanterPage />,
             roles: ["ADMIN", "ENVANTER"],
           },
@@ -88,7 +88,7 @@ export const routes = [
         icon: <InformationCircleIcon {...icon} />,
         name: "notifications",
         path: "/notifications",
-        element: <Notifications />,
+        element: <NotificationPage />,
         roles: ["ADMIN", "IK", "ENVANTER", "PERSONAL"],
       },
     ],
@@ -104,12 +104,13 @@ export const routes = [
         element: <AddUserPage />,
         roles: ["ADMIN", "IK"],
       },
+
       {
         icon: <ServerStackIcon {...icon} />,
         name: "sign in",
         path: "/sign-in",
         element: <SignIn />,
-        roles: ["ADMIN", "IK", "ENVANTER", "PERSONAL"],
+        roles: [],
       },
     ],
   },

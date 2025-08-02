@@ -23,7 +23,6 @@ export function AddUserPage() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
 
-
   const formik = useFormik({
     initialValues: {
       username: "",
@@ -126,7 +125,7 @@ export function AddUserPage() {
                   <Option value="PERSONAL">PERSONEL</Option>
                   <Option value="ADMIN">YÖNETİCİ</Option>
                   <Option value="IK">İNSAN KAYNAKLARI</Option>
-                  <Option value="ENVANTER_YONETIMI">ENVANTER YÖNETİMİ</Option>
+                  <Option value="ENVANTER">ENVANTER YÖNETİMİ</Option>
                 </Select>
                 {formik.touched.role && formik.errors.role && (
                   <Typography className="text-red-500 text-xs mt-1">

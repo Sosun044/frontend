@@ -9,10 +9,13 @@ const api = axios.create({
 api.interceptors.request.use((config) => {
     const token = getAccessToken();
     if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+        config.headers["Authorization"] = `Bearer ${token}`;
+    } else {
+        console.warn("🔑 Access Token yok!");
     }
     return config;
 });
+
 
 api.interceptors.response.use(
     (response) => response,
@@ -31,12 +34,17 @@ api.interceptors.response.use(
                 const res = await axios.post("http://localhost:8080/refreshToken", {
                     refreshToken: refresh,
                 });
+                console.log("📦 Refresh Response:", res.data); // Buraya bak payload mı data mı
 
-                const newAccessToken = res.data.data.accessToken;
+
+                const tokens = res.data.payload;
+                const newAccessToken = tokens.accessToken;
+                console.log("✅ Yeni Token:", newAccessToken);
+
                 saveAccessToken(newAccessToken);
 
-                // Yeni token ile tekrar isteği gönder
                 originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+                console.log("🧠 Header'a Eklenen:", originalRequest.headers.Authorization);
                 return api(originalRequest);
             } catch (refreshError) {
                 toast.error("Oturum süresi doldu. Lütfen tekrar giriş yapın.");

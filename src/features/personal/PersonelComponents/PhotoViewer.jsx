@@ -1,30 +1,36 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import PropTypes from "prop-types";
+import api from '../../../service/axiosInterceptor';
+
 
 function PhotoViewer({ personelId, size = "small", className = "" }) {
     const [photoSrc, setPhotoSrc] = useState(null);
 
     useEffect(() => {
+        const token = localStorage.getItem("accessToken");
+        if (!token) {
+            console.warn("⛔ Token yok, fotoğraf isteği iptal.");
+            return;
+        }
+
         const fetchPhoto = async () => {
             try {
-                const token = localStorage.getItem("accessToken");
-                const response = await axios.get(`http://localhost:8080/rest/api/personal/${personelId}/photo`, {
+                const response = await api.get(`http://localhost:8080/rest/api/personal/${personelId}/photo`, {
                     headers: { Authorization: `Bearer ${token}` },
                     responseType: "blob"
                 });
                 const imageUrl = URL.createObjectURL(response.data);
                 setPhotoSrc(imageUrl);
             } catch (e) {
-                if (e.response?.status === 404) {
-                    console.warn("Kişiye ait fotoğraf bulunamadı.");
-                }
+                console.error("❌ Fotoğraf yüklenemedi:", e);
                 setPhotoSrc("/images/default-user.png");
             }
         };
 
         fetchPhoto();
     }, [personelId]);
+
 
     const sizeClass =
         size === "large" ? "w-40 h-52" :

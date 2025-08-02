@@ -16,8 +16,12 @@ export const saveAccessToken = (accessToken) => {
     localStorage.setItem("accessToken", accessToken);
 };
 
-// Tokenları getir
-export const getAccessToken = () => localStorage.getItem("accessToken");
+export const getAccessToken = () => {
+    const token = localStorage.getItem("accessToken");
+    return token;
+};
+
+
 export const getRefreshToken = () => localStorage.getItem("refreshToken");
 
 // Tokenları temizle (çıkış için)
@@ -28,7 +32,6 @@ export const clearTokens = () => {
 
 // 🔐 Login fonksiyonu
 export const login = async (username, password) => {
-    debugger
     const response = await axios.post(`${BASE_URL}/authenticate`, {
         username,
         password,
@@ -46,7 +49,6 @@ export const login = async (username, password) => {
 
 // 🔁 Refresh Token fonksiyonu
 export const refreshAccessToken = async () => {
-    debugger
     const refreshToken = getRefreshToken();
 
     if (!refreshToken) throw new Error("Refresh token yok");

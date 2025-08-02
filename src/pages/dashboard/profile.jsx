@@ -7,13 +7,13 @@ import {
 import { useNavigate } from "react-router-dom";
 import { getMyProfile } from "../../features/personal/services/personalService";
 import { getMyAssignments } from "@/features/InventoryAssignment/services/inventoryAssignmentService";
+import PhotoViewer from "@/features/personal/PersonelComponents/PhotoViewer";
 
 export function Profile() {
-  const [personal, setPersonal] = useState(null);
+  const [personel, setpersonel] = useState(null);
   const [assignments, setAssignments] = useState([]);
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-
+  const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
@@ -25,31 +25,27 @@ export function Profile() {
 
     const fetchData = async () => {
       try {
-        const [personalData, assignmentData] = await Promise.all([
+        const [personelData, assignmentData] = await Promise.all([
           getMyProfile(),
           getMyAssignments(),
         ]);
 
-        console.log("🧍 Personal:", personalData);
-        console.log("📦 Assignments:", assignmentData);
-
-        setPersonal(personalData);
+        setpersonel(personelData);
         setAssignments(assignmentData);
       } catch (error) {
         console.error("❌ Hata:", error);
-        console.log("⚠️ Hata Status:", error.response?.status);
         if (error.response?.status === 401) {
           navigate("/sign-in");
         }
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchData();
-  }, []);
+  }, [navigate]);
 
-
-
-  if (loading) return <p className="p-4">Yükleniyor...</p>;
+  if (loading || !personel) return <p className="p-4">Yükleniyor...</p>;
 
   return (
     <div className="w-full">
@@ -59,38 +55,33 @@ export function Profile() {
 
       <Card className="relative mx-auto -mt-20 w-[95%] max-w-6xl p-6 shadow-xl">
         <div className="flex items-center gap-6 mb-8">
-          <Avatar
-            src={`/rest/api/personal/${personal.id}/photo`}
-            alt="Profile"
-            size="xxl"
-            variant="rounded"
-            className="shadow-md shadow-blue-gray-500/50"
-          />
+          <PhotoViewer personelId={personel?.id} size="medium" className="" />
           <div>
+
             <Typography variant="h4" color="blue-gray">
-              {personal.firstName} {personal.lastName}
+              {personel.firstName} {personel.lastName}
             </Typography>
             <Typography variant="small" color="gray" className="uppercase font-medium">
-              {personal.taskTitle.replaceAll("_", " ")}
+              {personel.taskTitle.replaceAll("_", " ")}
             </Typography>
           </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
-          <ProfileField label="Cinsiyet" value={personal.gender} />
-          <ProfileField label="Doğum Tarihi" value={personal.birthDate} />
-          <ProfileField label="Medeni Durum" value={personal.maritalStatus} />
-          <ProfileField label="TCKN" value={personal.tckn} />
-          <ProfileField label="Sicil No" value={personal.registrationNo} />
-          <ProfileField label="Mezuniyet" value={personal.educationLevel} />
-          <ProfileField label="Birim" value={personal.unit.replaceAll("_", " ")} />
-          <ProfileField label="Çalışıyor mu" value={personal.working ? "Evet" : "Hayır"} />
-          <ProfileField label="İşe Başlama" value={personal.startDate} />
-          <ProfileField label="Başlangıç Pozisyonu" value={personal.startingPosition || "-"} />
-          <ProfileField label="Başlangıç Ünvanı" value={personal.startingTitle || "-"} />
-          <ProfileField label="Ayrılma Tarihi" value={personal.resignationDate || "-"} />
-          <ProfileField label="Ayrılma Nedeni" value={personal.resignationReason || "-"} />
-          <ProfileField label="Aktif mi" value={personal.isActive ? "Evet" : "Hayır"} />
+          <ProfileField label="Cinsiyet" value={personel.gender} />
+          <ProfileField label="Doğum Tarihi" value={personel.birthDate} />
+          <ProfileField label="Medeni Durum" value={personel.maritalStatus} />
+          <ProfileField label="TCKN" value={personel.tckn} />
+          <ProfileField label="Sicil No" value={personel.registrationNo} />
+          <ProfileField label="Mezuniyet" value={personel.educationLevel} />
+          <ProfileField label="Birim" value={personel.unit.replaceAll("_", " ")} />
+          <ProfileField label="Çalışıyor mu" value={personel.working ? "Evet" : "Hayır"} />
+          <ProfileField label="İşe Başlama" value={personel.startDate} />
+          <ProfileField label="Başlangıç Pozisyonu" value={personel.startingPosition || "-"} />
+          <ProfileField label="Başlangıç Ünvanı" value={personel.startingTitle || "-"} />
+          <ProfileField label="Ayrılma Tarihi" value={personel.resignationDate || "-"} />
+          <ProfileField label="Ayrılma Nedeni" value={personel.resignationReason || "-"} />
+          <ProfileField label="Aktif mi" value={personel.isActive ? "Evet" : "Hayır"} />
         </div>
 
         <Typography variant="h5" className="mb-4 text-blue-gray-700">

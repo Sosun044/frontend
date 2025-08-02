@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Card,
   Input,
@@ -12,12 +12,18 @@ import { signInSchema } from '../../utils/validationSchemas'
 import { login, saveTokens } from '../../service/authService';
 import { useFormik } from "formik";
 import { useAuth } from "@/context/useAuth";
+import { Navigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 
 
 export function SignIn() {
   const navigate = useNavigate();
-  const { setUser, setToken, isInitialized } = useAuth();
+  const { setUser, setToken, token, isInitialized } = useAuth();
+  if (!isInitialized) {
+    return <div className="p-8 text-center text-gray-600">Yükleniyor...</div>;
+  }
+
+
   const formik = useFormik({
     initialValues: {
       username: "",
@@ -27,17 +33,14 @@ export function SignIn() {
       try {
         const res = await login(values.username, values.password);
         const decoded = jwtDecode(res.accessToken);
-        debugger
+
 
         const role = decoded.role;
         const username = decoded.sub;
 
         setToken(res.accessToken);
-        setUser({ username, role });
-
+        setUser(decoded)
         toast.success("Giriş başarılı!");
-        console.log(role)
-        // Rol bazlı yönlendirme
         switch (role) {
           case "ADMIN":
             navigate("/dashboard/home");
@@ -46,7 +49,7 @@ export function SignIn() {
             navigate("/dashboard/personel");
             break;
           case "ENVANTER":
-            navigate("/dashboard/envanter/envanter-list");
+            navigate("/dashboard/envanter");
 
             break;
           case "PERSONAL":
@@ -76,7 +79,6 @@ export function SignIn() {
 
         <form
           onSubmit={(e) => {
-            ("🟡 Native form submit başladı");
             e.preventDefault();
             formik.handleSubmit(e);
           }}

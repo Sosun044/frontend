@@ -12,38 +12,37 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
 
     useEffect(() => {
+        const syncAuth = () => {
+            const accessToken = getAccessToken();
+            if (accessToken) {
+                try {
+                    const decoded = jwtDecode(accessToken);
+                    const role = decoded.role;
+                    const username = decoded.sub;
+                    const id = decoded.id; // Eğer backend'de "id" claim'i varsa
 
-        const accessToken = getAccessToken();
-
-        if (accessToken) {
-            try {
-                const decoded = jwtDecode(accessToken);
-                console.log("🎯 Decoded Token:", decoded);
-                setUser({ username: decoded.sub, role: decoded.role });
-                setToken(accessToken);
-            } catch (e) {
-                console.error("❌ Token decode edilemedi:", e);
-                clearTokens();
-                setUser(null);
-                setToken(null);
-            } finally {
-                setIsInitialized(true);
+                    setToken(accessToken);
+                    setUser({ username, role, id }); // Buraya dikkat!
+                } catch (err) {
+                    console.error(" Token çözümlenemedi:", err);
+                    clearTokens();
+                }
             }
-        } else {
-            setIsInitialized(true); // token hiç yoksa da set et
-        }
+            setIsInitialized(true);
+        };
+
+        syncAuth();
+
+        window.addEventListener("storage", syncAuth); // Başkası localStorage'a token yazarsa
+        return () => window.removeEventListener("storage", syncAuth);
     }, []);
-
-
-
-
 
 
     const logout = () => {
         clearTokens();
         setUser(null);
         setToken(null);
-        // window.location.href = "/auth/sign-in";
+        window.location.href = "/auth/sign-in";
     };
 
     return (
