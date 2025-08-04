@@ -6,7 +6,6 @@ const InventoryFilter = ({ filters, setFilters, inventoryTypes, onFilter }) => {
     return (
         <div className="mb-6 p-4 shadow-md border border-gray-200 rounded bg-white">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                {/* Envanter Tipi */}
                 <div>
                     <label className="block text-sm font-medium mb-1 text-gray-700">
                         Envanter Tipi
@@ -27,7 +26,6 @@ const InventoryFilter = ({ filters, setFilters, inventoryTypes, onFilter }) => {
                     </select>
                 </div>
 
-                {/* Seri No */}
                 <div>
                     <label className="block text-sm font-medium mb-1 text-gray-700">
                         Seri Numarası
@@ -43,7 +41,6 @@ const InventoryFilter = ({ filters, setFilters, inventoryTypes, onFilter }) => {
                     />
                 </div>
 
-                {/* Durum */}
                 <div>
                     <label className="block text-sm font-medium mb-1 text-gray-700">
                         Durum

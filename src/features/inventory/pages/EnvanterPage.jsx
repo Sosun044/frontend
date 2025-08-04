@@ -6,6 +6,8 @@ import InventoryList from "../inventoryComponents/InventoryList";
 import InventoryUpdateForm from "../inventoryComponents/InventoryUpdateForm";
 import InventoryDeleteConfirm from "../inventoryComponents/InventoryDeleteConfirm";
 import InventoryFilter from "../inventoryComponents/InventoryFilter";
+import InventoryDetailDialog from "../inventoryComponents/InventoryDetailDialog";
+
 
 import { getInventories, deleteInventory, filterWithMultipleFields } from "../services/EnvanterService";
 import { getInventoryTypes } from "../services/inventoryTypeService";
@@ -17,6 +19,8 @@ export function EnvanterPage() {
     const [openEdit, setOpenEdit] = useState(false);
     const [openConfirm, setOpenConfirm] = useState(false);
     const [inventoryTypes, setInventoryTypes] = useState([]);
+    const [selectDetail, setSelectDetail] = useState(null);
+    const [openDetail, setOpenDetail] = useState(false);
     const [filters, setFilters] = useState({
         typeName: "",
         serialNumber: "",
@@ -27,7 +31,10 @@ export function EnvanterPage() {
         fetchInventories();
         fetchInventoryTypes();
     }, []);
-
+    const handleDetailClick = (inventory) => {
+        setSelectDetail(inventory);
+        setOpenDetail(true);
+    }
     const fetchInventories = async () => {
         try {
             const data = await getInventories();
@@ -119,14 +126,12 @@ export function EnvanterPage() {
 
     return (
         <section className="p-6">
-            {/* Başlık */}
             <Card className="mb-8 bg-gradient-to-br from-gray-800 to-gray-900 text-white px-6 py-4 shadow-lg">
                 <Typography variant="h5" className="font-bold">
                     Envanter Tablosu
                 </Typography>
             </Card>
 
-            {/* Filtreleme */}
             <InventoryFilter
                 filters={filters}
                 setFilters={setFilters}
@@ -134,16 +139,20 @@ export function EnvanterPage() {
                 onFilter={handleFilter}
             />
 
-            {/* Envanter Listesi */}
             <Card className="overflow-x-auto shadow-md">
                 <InventoryList
                     inventoryList={inventoryList}
                     onEditClick={handleEditClick}
                     onDeleteClick={handleDeleteClick}
+                    onDetailClick={handleDetailClick}
                 />
             </Card>
+            <InventoryDetailDialog
+                open={openDetail}
+                onClose={() => setOpenDetail(false)}
+                inventory={selectDetail}
+            />
 
-            {/* Güncelleme Dialog */}
             <Dialog open={openEdit} handler={() => setOpenEdit(false)} size="lg">
                 <div className="p-6 max-h-[80vh] overflow-y-auto">
                     <InventoryUpdateForm
@@ -155,7 +164,6 @@ export function EnvanterPage() {
                 </div>
             </Dialog>
 
-            {/* Silme Onay */}
             <InventoryDeleteConfirm
                 open={openConfirm}
                 inventory={selectedInventory}

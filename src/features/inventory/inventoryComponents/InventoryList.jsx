@@ -58,7 +58,10 @@ function InventoryList({ inventoryList = [], onEditClick, onDeleteClick, onDetai
                             <td className="p-4 text-right space-x-2">
                                 <Tooltip content="Detay Göster">
                                     <IconButton
-                                        onClick={() => onDetailClick?.(item)}
+                                        onClick={() => {
+                                            console.log("Detay gösteriliyor:", item); // Log bırak
+                                            onDetailClick?.(item); // Dialog'u tetikle
+                                        }}
                                         size="sm"
                                         variant="outlined"
                                         color="blue-gray"
@@ -66,6 +69,7 @@ function InventoryList({ inventoryList = [], onEditClick, onDeleteClick, onDetai
                                         <PlusIcon className="h-4 w-4" />
                                     </IconButton>
                                 </Tooltip>
+
                                 <Button
                                     variant="outlined"
                                     size="sm"

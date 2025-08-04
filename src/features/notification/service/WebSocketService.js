@@ -9,9 +9,12 @@ export default function NotificationSocket({ user, token, isInitialized }) {
         console.log("🧪 useEffect triggered", user, token);
         const username = user?.username || user?.sub || user?.id;
         if (!username || !token || token.length < 10) {
+            console.warn("❗ Kullanıcı ya da token geçersiz, bağlantı kurulmadı");
             return;
         }
         if (!stompClientRef.current?.connected) {
+            console.log("🚀 WebSocket bağlantısı başlatılıyor");
+
             // const socket = new SockJS(`http://localhost:8080/ws`);
             // const client = new Client({
             //     webSocketFactory: () => socket,
@@ -32,19 +35,33 @@ export default function NotificationSocket({ user, token, isInitialized }) {
             //     },
             // });
             const client = new Client({
-                webSocketFactory: () => new SockJS("http://localhost:8080/ws"),
+                brokerURL: "ws://localhost:8080/ws",
                 connectHeaders: {
                     Authorization: `Bearer ${token}`
                 },
+                debug: (str) => {
+                    console.log("📡 STOMP DEBUG →", str);
+                },
+                reconnectDelay: 5000,
                 onConnect: () => {
+                    console.log("✅ WebSocket bağlandı! Kullanıcı:", username);
                     client.subscribe("/user/queue/notifications", (message) => {
+                        try {
+                            const body = JSON.parse(message.body);
+                            toast.info(`${body.title}: ${body.message}`);
+                        } catch (e) {
+                            console.error("⚠️ JSON parse hatası:", e);
+                        }
                     });
                 },
+
                 onStompError: (frame) => {
+                    console.error("🚨 STOMP Hatası:", frame);
+
                 },
-                debug: (str) => {
+                onWebSocketClose: (event) => {
+                    console.warn("🔌 WebSocket bağlantısı kapandı:", event);
                 },
-                reconnectDelay: 5000, // Bağlantı koparsa yeniden denesin
             });
             client.activate();
             stompClientRef.current = client;
@@ -52,6 +69,8 @@ export default function NotificationSocket({ user, token, isInitialized }) {
 
         return () => {
             stompClientRef.current?.deactivate();
+            console.log("⛔ WebSocket bağlantısı kapatılıyor");
+
         };
     }, [isInitialized, user, token]);
 

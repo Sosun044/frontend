@@ -9,8 +9,10 @@ import { UserGroupIcon, ArchiveBoxIcon, ArrowPathIcon, UsersIcon } from "@heroic
 import { getActivePersonalCount } from "@/features/personal/services/personalService";
 import { getTotalInventory } from '../../features/inventory/services/EnvanterService'
 import { getTotalAssignment } from "@/features/InventoryAssignment/services/inventoryAssignmentService";
+import { useAuth } from "@/context/useAuth";
 
 export function Home() {
+  const { user } = useAuth();
   const [activeCount, setActiveCount] = useState(0);
   useEffect(() => {
     const fetchActiveCount = async () => {
@@ -79,7 +81,7 @@ export function Home() {
 
       <Card className="mt-8 p-6 shadow-sm border border-blue-gray-100">
         <Typography variant="h6" color="blue-gray" className="mb-4">
-          Hoş Geldiniz, Abdullah Bey
+          Hoş Geldiniz, {user?.username}
         </Typography>
         <Typography variant="small" color="gray">
           Bu panel üzerinden personel, envanter ve zimmet işlemlerini kolayca takip edebilirsiniz. Güncel veriler yukarıda özetlenmiştir.
